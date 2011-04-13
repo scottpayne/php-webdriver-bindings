@@ -54,7 +54,7 @@ class WebDriver {
   public function connect() {
 	$request = $this->selUrl."/session";
 	$session = curl_init($request); 
-	$postargs = "{ desiredCapabilities: {  browserName: 'chrome', javascriptEnabled: true, nativeEvents: true } } ";
+	$postargs = "{ desiredCapabilities: {  browserName: 'firefox', javascriptEnabled: true, nativeEvents: true } } ";
         $this->preparePOST($session, $postargs);
 	curl_setopt($session, CURLOPT_HEADER, true); 
   	$response = curl_exec($session); 

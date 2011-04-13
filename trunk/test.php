@@ -16,8 +16,8 @@ limitations under the License.
 */
 
 
-require("Webdriver.php");
-require("Keys.php");
+require("phpwebdriver/Webdriver.php");
+require("phpwebdriver/Keys.php");
 
 $test_url = str_replace("test.php", "test_page.php", ($_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']));
 
