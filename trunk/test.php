@@ -16,21 +16,21 @@ limitations under the License.
 */
 
 
-require("phpwebdriver/Webdriver.php");
+require_once "phpwebdriver/WebDriver.php";
 require("phpwebdriver/Keys.php");
 
 $test_url = str_replace("test.php", "test_page.php", ($_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']));
 
-$driver = new WebDriver("http://localhost:4444/wd/hub");
+$driver = new WebDriver("localhost", "4444");
 $driver->connect();                            
-$driver->navigate($test_url);
+$driver->get($test_url);
 $element = $driver->findElementBy("id", "prod_name");
-$driver->sendKeys($element, array("selenium 123\n" ) );
-//$driver->submit($element);
+$element->sendKeys(array("selenium 123\n" ) );
+//$element->submit();
 
 $element = $driver->findElementBy("id", "result1");
 if ($element) {
-  echo "getText = ".$driver->getText($element)."<br/>";
+  echo "getText = ".$element->getText()."<br/>";
 } else {
   echo "Element not found<br/>";
 } 
