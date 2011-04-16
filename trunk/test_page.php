@@ -1,17 +1,21 @@
 <html>
+    <head>
+        <title>Test page</title>
+    </head>
 <body>
 
-<div id="result1" style="background:green">
+
 <?php 
 if (isset($_POST["product_name"])) {
    $prod = $_POST["product_name"];
-   echo "you entered : ".$prod;
-}
+?><div id="result1" style="background:green"><?php echo $prod; ?><br/><br/></div> 
+<?php
+} else {
 ?>
-<br/><br/></div>
+
 <form name="form1" method="post">
 
-<input type="text" name="product_name" id="prod_name" size="40" value="<?php if (isset($prod)) echo $prod;?>"/>
+product name: <input type="text" name="product_name" id="prod_name" size="40" value="<?php if (isset($prod)) echo $prod;?>"/>
 <select name="sel1">
   <option id="1">option 1</option>
   <option id="2">option 2</option>
@@ -23,6 +27,9 @@ if (isset($_POST["product_name"])) {
 <br/>
 <input type="submit" value="Confirm"/>
 </form>
+<?php } ?>
+
+<br/><div name="div1">lorem ipsum</div>
 
 </body>
 </html>

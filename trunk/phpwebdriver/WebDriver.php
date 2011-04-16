@@ -25,19 +25,22 @@ class WebDriver extends WebDriverBase {
         parent::__construct("http://" . $host . ":" . $port . "/wd/hub");
     }
 
-    public function connect() {
+    public function connect($browserName="firefox") {
         $request = $this->requestURL . "/session";
         $session = curl_init($request);
-        $postargs = "{ desiredCapabilities: {  browserName: 'firefox', javascriptEnabled: true, nativeEvents: true } } ";
+        $postargs = "{ desiredCapabilities: {  browserName: '" . $browserName . "', javascriptEnabled: true, nativeEvents: true } } ";
         $this->preparePOST($session, $postargs);
         curl_setopt($session, CURLOPT_HEADER, true);
         $response = curl_exec($session);
         $header = curl_getinfo($session);
         $this->requestURL = $header['url'];
-        print_r($this->requestURL . "<br/>");
+        //print_r($this->requestURL . "<br/>");
         curl_close($session);
     }
 
+    /**
+     * Delete the session.
+     */
     public function close() {
         $request = $this->requestURL;
         $session = curl_init($request);
@@ -46,14 +49,45 @@ class WebDriver extends WebDriverBase {
         curl_close($session);
     }
 
+    /**
+     * Navigate to a new URL
+     * @param string $url The URL to navigate to.
+     */
     public function get($url) {
         $request = $this->requestURL . "/url";
         $session = curl_init($request);
         $postargs = "{'url':'" . $url . "'}";
         $this->preparePOST($session, $postargs);
         $response = curl_exec($session);
-        print_r($response . "<br/>");
         curl_close($session);
+    }
+
+     /**
+     * Get the current page title.
+     * @return string The current URL.
+     */
+    public function getCurrentUrl() {
+        $response = $this->execute_rest_request_GET($this->requestURL . "/url");
+        return $this->extractValueFromJsonResponse($response);
+    }
+
+    /**
+     * Get the current page title. 
+     * @return string current page title
+     */
+    public function getTitle() {
+        $response = $this->execute_rest_request_GET($this->requestURL . "/title");
+        return $this->extractValueFromJsonResponse($response);
+    }
+
+    /**
+     * Get the current page source.
+     * @return string page source 
+     */
+    public function getPageSource() {
+        $request = $this->requestURL . "/source";
+        $response = $this->execute_rest_request_GET($request);
+        return $this->extractValueFromJsonResponse($response);
     }
 
 }

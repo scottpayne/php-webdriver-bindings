@@ -19,8 +19,13 @@ require_once 'WebDriverBase.php';
 
 class WebElement extends WebDriverBase {
 
-    function __construct($WebDriver, $element, $options) {
-        parent::__construct($WebDriver->requestURL . "/element/" . $element->ELEMENT);
+    function __construct($parent, $element, $options) {
+        if (get_class($parent) == 'WebDriver') {
+            $root = $parent->requestURL;
+        } else {
+            $root = preg_replace("(/element/.*)", "", $parent->requestURL);
+        }
+        parent::__construct($root . "/element/" . $element->ELEMENT);
     }
 
     public function sendKeys($value) {
@@ -30,10 +35,15 @@ class WebElement extends WebDriverBase {
         $request = $this->requestURL . "/value";
         $session = curl_init($request);
         $postargs = "{'value':" . json_encode($value) . "}";
-        print_r($postargs);
         $this->preparePOST($session, $postargs);
         $response = trim(curl_exec($session));
         curl_close($session);
+    }
+
+    public function getValue() {
+        $request = $this->requestURL . "/value";
+        $response = $this->execute_rest_request_GET($request);
+        return $this->extractValueFromJsonResponse($response);
     }
 
     public function clear() {
@@ -62,32 +72,35 @@ class WebElement extends WebDriverBase {
 
     public function getText() {
         $request = $this->requestURL . "/text";
-        $session = curl_init($request);
-        $this->prepareGET($session);
-        $response = curl_exec($session);
-        curl_close($session);
-
-        $response = json_decode(trim($response));
-        if ($response && $response->value) {
-            return $response->value;
-        }
-        return null;
+        $response = $this->execute_rest_request_GET($request);
+        return $this->extractValueFromJsonResponse($response);
     }
 
     public function getName() {
         $request = $this->requestURL . "/name";
-        $session = curl_init($request);
-        $this->prepareGET($session);
-        $response = curl_exec($session);
-        curl_close($session);
-
-        $response = json_decode(trim($response));
-        if ($response && $response->value) {
-            return $response->value;
-        }
-        return null;
+        $response = $this->execute_rest_request_GET($request);
+        return $this->extractValueFromJsonResponse($response);
     }
 
+    /**
+     * Determine if an OPTION element, or an INPUT element of type checkbox or radiobutton is currently selected.
+     * @return boolean Whether the element is selected.
+     */
+    public function isSelected() {
+        $request = $this->requestURL . "/selected";
+        $response = $this->execute_rest_request_GET($request);
+        $isSelected = $this->extractValueFromJsonResponse($response);
+        return ($isSelected == 'true');
+    }
+
+    /**
+     * Select an OPTION element, or an INPUT element of type checkbox or radiobutton.
+     * 
+     */
+    public function setSelected() {
+        $request = $this->requestURL . "/selected";
+        $response = $this->execute_rest_request_POST($request, null);
+    }
 
 }
 

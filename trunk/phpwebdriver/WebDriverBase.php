@@ -37,12 +37,39 @@ class WebDriverBase {
         curl_setopt($session, CURLOPT_FOLLOWLOCATION, true);
     }
 
+    /**
+     * Execute POST request
+     * @param string $request URL REST request
+     * @param string $postargs POST data
+     * @return string $response Response from POST request
+     */
+    protected function execute_rest_request_POST($request, $postargs) {
+        $session = curl_init($request);
+        $this->preparePOST($session, $postargs);
+        $response = trim(curl_exec($session));
+        curl_close($session);
+        return $response;
+    }
+
     protected function prepareGET($session) {
         curl_setopt($session, CURLOPT_HTTPHEADER, array("application/json;charset=UTF-8"));
         //curl_setopt($session, CURLOPT_GET, true);
         curl_setopt($session, CURLOPT_HEADER, false);
         curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($session, CURLOPT_FOLLOWLOCATION, true);
+    }
+
+    /**
+     * Execute GET request
+     * @param string $request URL REST request 
+     * @return string $response Response from GET request
+     */
+    protected function execute_rest_request_GET($request) {
+        $session = curl_init($request);
+        $this->prepareGET($session);
+        $response = curl_exec($session);
+        curl_close($session);
+        return $response;
     }
 
     protected function prepareDELETE($session) {
@@ -53,13 +80,18 @@ class WebDriverBase {
         curl_setopt($session, CURLOPT_FOLLOWLOCATION, true);
     }
 
+    /**
+     * Search for an element on the page, starting from the document root. 
+     * @param string $locatorStrategy
+     * @param string $value
+     * @return WebElement found element
+     */
     public function findElementBy($locatorStrategy, $value) {
         $request = $this->requestURL . "/element";
         $session = curl_init($request);
         $postargs = "{'using':'" . $locatorStrategy . "', 'value':'" . $value . "'}";
         $this->preparePOST($session, $postargs);
         $response = trim(curl_exec($session));
-        print_r($response . "<br/>");
         $json_response = json_decode($response);
         $element = $json_response->{'value'};
         curl_close($session);
@@ -69,17 +101,40 @@ class WebDriverBase {
         return new WebElement($this, $element, null);
     }
 
+    /**
+     * 	Search for multiple elements on the page, starting from the document root. 
+     * @param string $locatorStrategy
+     * @param string $value
+     * @return array of WebElement
+     */
     public function findElementsBy($locatorStrategy, $value) {
         $request = $this->requestURL . "/elements";
         $session = curl_init($request);
         $postargs = "{'using':'" . $locatorStrategy . "', 'value':'" . $value . "'}";
         $this->preparePOST($session, $postargs);
         $response = trim(curl_exec($session));
-        print_r($response . "<br/>");
         $json_response = json_decode($response);
-        $element = $json_response->{'value'};
+        $elements = $json_response->{'value'};
         curl_close($session);
-        return $element;
+        $webelements = array();
+        foreach ($elements as $key => $element) {
+            $webelements[] = new WebElement($this, $element, null);
+        }
+        return $webelements;
+    }
+
+    /**
+     * Function returns value of 'value' attribute in JSON string
+     * @example extractValueFromJsonResponse("{'name':'John', 'value':'123'}")=='123'
+     * @param string $json JSON string with value attrubute to extract
+     * @return string value of 'value' attribute
+     */
+    public function extractValueFromJsonResponse($json) {
+        $json = json_decode(trim($json));
+        if ($json && $json->value) {
+            return $json->value;
+        }
+        return null;
     }
 
 }
