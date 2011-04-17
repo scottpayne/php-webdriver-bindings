@@ -89,10 +89,15 @@ class WebDriverBase {
     public function findElementBy($locatorStrategy, $value) {
         $request = $this->requestURL . "/element";
         $session = curl_init($request);
-        $postargs = "{'using':'" . $locatorStrategy . "', 'value':'" . $value . "'}";
+        //$postargs = "{'using':'" . $locatorStrategy . "', 'value':'" . $value . "'}";
+	$args = array('using'=>$locatorStrategy, 'value'=>$value);
+	$postargs = json_encode($args, JSON_FORCE_OBJECT);
         $this->preparePOST($session, $postargs);
         $response = trim(curl_exec($session));
         $json_response = json_decode($response);
+	if (!$json_response) {
+		return null;
+	}
         $element = $json_response->{'value'};
         curl_close($session);
         if (!$element && !$element->ELEMENT) {

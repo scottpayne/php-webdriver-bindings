@@ -17,30 +17,15 @@ limitations under the License.
 
 
 require_once "phpwebdriver/WebDriver.php";
-require("phpwebdriver/Keys.php");
+require("phpwebdriver/LocatorStrategy.php");
 
-$test_url = str_replace("test.php", "test_page.php", ($_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']));
+$webdriver = new WebDriver("localhost", "4444");
+$webdriver->connect("firefox");                            
+$webdriver->get("http://google.com");
+$element = $webdriver->findElementBy(LocatorStrategy::name, "q");
+$element->sendKeys(array("selenium google code" ) );
+$element->submit();
 
-$driver = new WebDriver("localhost", "4444");
-$driver->connect();                            
-$driver->get($test_url);
-$element = $driver->findElementBy("id", "prod_name");
-$element->sendKeys(array("selenium 123\n" ) );
-//$element->submit();
-
-$element = $driver->findElementBy("id", "result1");
-if ($element) {
-  echo "getText = ".$element->getText()."<br/>";
-} else {
-  echo "Element not found<br/>";
-} 
-
-$select = $driver->findElementsBy("name", "sel1");
-if ($select) {
-  print_r($select);
-} 
-
-
-$driver->close();
+$webdriver->close();
 
 ?>

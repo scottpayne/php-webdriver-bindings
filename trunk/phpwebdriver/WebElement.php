@@ -65,7 +65,7 @@ class WebElement extends WebDriverBase {
     public function submit() {
         $request = $this->requestURL . "/submit";
         $session = curl_init($request);
-        $this->preparePOST($session, null);
+        $this->preparePOST($session, "");
         $response = trim(curl_exec($session));
         curl_close($session);
     }

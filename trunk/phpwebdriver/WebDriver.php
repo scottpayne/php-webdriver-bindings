@@ -56,8 +56,8 @@ class WebDriver extends WebDriverBase {
     public function get($url) {
         $request = $this->requestURL . "/url";
         $session = curl_init($request);
-        $postargs = "{'url':'" . $url . "'}";
-        $this->preparePOST($session, $postargs);
+        $args = array('url'=>$url);
+        $this->preparePOST($session, json_encode($args, JSON_FORCE_OBJECT));
         $response = curl_exec($session);
         curl_close($session);
     }
