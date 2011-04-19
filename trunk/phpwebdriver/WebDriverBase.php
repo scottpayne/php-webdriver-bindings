@@ -17,6 +17,9 @@
  */
 
 require_once 'WebElement.php';
+require_once 'WebDriverResponseStatus.php';
+require_once 'WebDriverException.php';
+require_once 'NoSuchElementException.php';
 
 class WebDriverBase {
 
@@ -81,6 +84,63 @@ class WebDriverBase {
     }
 
     /**
+     * Function checks if there was error in last command excecution.
+     * If there was an error - new Exception is thrown.
+     * @param Curl_session $session
+     */
+    protected function handleError($session, $response) {
+        $last_error = curl_errno($session);
+        print_r('last_error = ' . $last_error);
+        if ($last_error == 500) { // selenium error
+            print_r($response);
+            curl_close($session);
+            throw new WebDriverException($message, $code, $previous);
+        } else
+        if ($last_error != 0) { // unknown error
+            print_r($response);
+            curl_close($session);
+            throw new WebDriverException($message, $code, $previous);
+        }
+    }
+
+    /**
+     * Function analyses status attribute of the response.
+     * For some statuses it throws exception (for example NoSuchElementException).
+     * @param string $json_response
+     */
+    protected function handleResponse($json_response) {
+        $status = $json_response->{'status'};
+        switch ($status) {
+            case WebDriverResponseStatus::Success:
+                return;
+            break;
+            case WebDriverResponseStatus::NoSuchElement:
+                throw new NoSuchElementException($json_response);
+            break;
+            default:
+                throw new WebDriverBase($status, "", null);
+            break;
+        }
+        /*
+         * 0 	Success 	The command executed successfully.
+7 	NoSuchElement 	An element could not be located on the page using the given search parameters.
+8 	NoSuchFrame 	A request to switch to a frame could not be satisfied because the frame could not be found.
+9 	UnknownCommand 	The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource.
+10 	StaleElementReference 	An element command failed because the referenced element is no longer attached to the DOM.
+11 	ElementNotVisible 	An element command could not be completed because the element is not visible on the page.
+12 	InvalidElementState 	An element command could not be completed because the element is in an invalid state (e.g. attempting to click a disabled element).
+13 	UnknownError 	An unknown server-side error occurred while processing the command.
+15 	ElementIsNotSelectable 	An attempt was made to select an element that cannot be selected.
+17 	JavaScriptError 	An error occurred while executing user supplied JavaScript.
+19 	XPathLookupError 	An error occurred while searching for an element by XPath.
+23 	NoSuchWindow 	A request to switch to a different window could not be satisfied because the window could not be found.
+24 	InvalidCookieDomain 	An illegal attempt was made to set a cookie under a different domain than the current page.
+25 	UnableToSetCookie 	A request to set a cookie's value could not be satisfied.
+28 	Timeout 	A command did not complete before its timeout expired. 
+         */
+    }
+
+    /**
      * Search for an element on the page, starting from the document root. 
      * @param string $locatorStrategy
      * @param string $value
@@ -90,19 +150,21 @@ class WebDriverBase {
         $request = $this->requestURL . "/element";
         $session = curl_init($request);
         //$postargs = "{'using':'" . $locatorStrategy . "', 'value':'" . $value . "'}";
-	$args = array('using'=>$locatorStrategy, 'value'=>$value);
-	$postargs = json_encode($args, JSON_FORCE_OBJECT);
+        $args = array('using' => $locatorStrategy, 'value' => $value);
+        $postargs = json_encode($args, JSON_FORCE_OBJECT);
         $this->preparePOST($session, $postargs);
-        $response = trim(curl_exec($session));
-        $json_response = json_decode($response);
-	if (!$json_response) {
-		return null;
-	}
-        $element = $json_response->{'value'};
-        curl_close($session);
-        if (!$element && !$element->ELEMENT) {
+        $response = curl_exec($session);
+        $json_response = json_decode(trim($response));
+        if (!$json_response) {
             return null;
         }
+        curl_close($session);
+        $this->handleResponse($json_response);
+        $element = $json_response->{'value'};
+        /*
+        if (!$element || !isset($element->ELEMENT)) {
+            return null;
+        }*/
         return new WebElement($this, $element, null);
     }
 

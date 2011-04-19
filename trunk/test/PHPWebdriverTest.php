@@ -1,7 +1,6 @@
 <?php
 
 require_once 'phpwebdriver/WebDriver.php';
-require_once 'phpwebdriver/LocatorStrategy.php';
 
 /**
  * 
@@ -20,6 +19,14 @@ class PHPWebDriverTest extends PHPUnit_Framework_TestCase {
 
     protected function tearDown() {
         $this->webdriver->close();
+    }
+
+    /**
+     * @expectedException WebDriverException
+     */
+    public function testHandleError() {
+        $this->webdriver->get($this->test_url);
+        $element = $this->webdriver->findElementBy(LocatorStrategy::name, "12323233233aa");
     }
 
     public function testFindElemenInElementAndSelections() {

@@ -18,6 +18,8 @@
 
 require_once 'WebDriverBase.php';
 require_once 'WebElement.php';
+require_once 'WebDriverException.php';
+require_once 'LocatorStrategy.php';
 
 class WebDriver extends WebDriverBase {
 
