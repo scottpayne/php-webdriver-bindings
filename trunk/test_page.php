@@ -31,5 +31,18 @@ product name: <input type="text" name="product_name" id="prod_name" size="40" va
 
 <br/><div name="div1">lorem ipsum</div>
 
+<a href="javascript:sayHelloAlert('computer')">say hello (javascript)</a>
+
+<script type="text/javascript">
+function sayHello(name) {
+  return "hello "+name+" !!!";
+}
+
+function sayHelloAlert(name) {
+  alert(sayHello(name));
+}
+
+</script>
+
 </body>
 </html>

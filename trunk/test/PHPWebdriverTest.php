@@ -21,6 +21,22 @@ class PHPWebDriverTest extends PHPUnit_Framework_TestCase {
         $this->webdriver->close();
     }
 
+    public function testExecute() {
+        $this->webdriver->get($this->test_url);
+        $result = $this->webdriver->executeScript("return sayHello('unitTest')", array());
+        $this->assertEquals("hello unitTest !!!", $result);
+    }
+
+    public function testScreenShot() {
+        $this->webdriver->get($this->test_url);
+        $tmp_filename = "screenshot".uniqid().".png";
+        //unlink($tmp_filename);
+        $result = $this->webdriver->getScreenshotAndSaveToFile($tmp_filename);
+        $this->assertTrue(file_exists($tmp_filename));
+        $this->assertTrue(filesize($tmp_filename)>100);
+        unlink($tmp_filename);
+    }
+
     /**
      * @expectedException WebDriverException
      */
@@ -56,8 +72,8 @@ class PHPWebDriverTest extends PHPUnit_Framework_TestCase {
         $element2 = $this->webdriver->findElementBy(LocatorStrategy::id, "result1");
         $this->assertNotNull($element2);
     }
- 
-     public function testGetPageAndUrl() {
+
+    public function testGetPageAndUrl() {
         $this->webdriver->get($this->test_url);
         $this->assertEquals($this->webdriver->getTitle(), "Test page");
         $this->assertEquals($this->webdriver->getCurrentUrl(), $this->test_url);
@@ -85,6 +101,7 @@ class PHPWebDriverTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(strpos($src, "<body>") > 0);
         $this->assertTrue(strpos($src, "div1") > 0);
     }
+
 }
 
 ?>

@@ -58,13 +58,13 @@ class WebDriver extends WebDriverBase {
     public function get($url) {
         $request = $this->requestURL . "/url";
         $session = curl_init($request);
-        $args = array('url'=>$url);
+        $args = array('url' => $url);
         $this->preparePOST($session, json_encode($args, JSON_FORCE_OBJECT));
         $response = curl_exec($session);
         curl_close($session);
     }
 
-     /**
+    /**
      * Get the current page title.
      * @return string The current URL.
      */
@@ -90,6 +90,91 @@ class WebDriver extends WebDriverBase {
         $request = $this->requestURL . "/source";
         $response = $this->execute_rest_request_GET($request);
         return $this->extractValueFromJsonResponse($response);
+    }
+
+    /**
+     * Get the current user input speed. The server should return one of {SLOW|MEDIUM|FAST}.
+     * How these constants map to actual input speed is still browser specific and not covered by the wire protocol.
+     * @return string {SLOW|MEDIUM|FAST}
+     */
+    public function getSpeed() {
+        $request = $this->requestURL . "/speed";
+        $response = $this->execute_rest_request_GET($request);
+        return $this->extractValueFromJsonResponse($response);
+    }
+
+    /**
+      Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.
+     * The executed script is assumed to be synchronous and the result of evaluating the script
+     * is returned to the client.
+     * @return Object result of evaluating the script is returned to the client.
+     */
+    public function execute($script, $script_args) {
+        $request = $this->requestURL . "/execute";
+        $session = curl_init($request);
+        $args = array('script' => $script, 'args' => $script_args);
+        print_r($jsonData);
+        $this->preparePOST($session, $jsonData);
+        $response = curl_exec($session);
+        curl_close($session);
+        return $this->extractValueFromJsonResponse($response);
+    }
+
+    /**
+      Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.
+     * The executed script is assumed to be synchronous and the result of evaluating the script
+     * is returned to the client.
+     * @return Object result of evaluating the script is returned to the client.
+     */
+    public function executeScript($script, $script_args) {
+        $request = $this->requestURL . "/execute";
+        $session = curl_init($request);
+        $args = array('script' => $script, 'args' => $script_args);
+        $jsonData = json_encode($args);
+        $this->preparePOST($session, $jsonData);
+        $response = curl_exec($session);
+        curl_close($session);
+        return $this->extractValueFromJsonResponse($response);
+    }
+
+    /**
+      Inject a snippet of JavaScript into the page for execution
+     * in the context of the currently selected frame. The executed script
+     * is assumed to be asynchronous and must signal that is done by invoking
+     * the provided callback, which is always provided as the final argument
+     * to the function. The value to this callback will be returned to the client.
+     * @return Object result of evaluating the script is returned to the client.
+     */
+    public function executeAsyncScript($script, $script_args) {
+        $request = $this->requestURL . "/execute_async";
+        $session = curl_init($request);
+        $args = array('script' => $script, 'args' => $script_args);
+        $jsonData = json_encode($args);
+        $this->preparePOST($session, $jsonData);
+        $response = curl_exec($session);
+        curl_close($session);
+        return $this->extractValueFromJsonResponse($response);
+    }
+
+    /**
+     * Take a screenshot of the current page.
+     * @return string The screenshot as a base64 encoded PNG.
+     */
+    public function getScreenshot() {
+        $request = $this->requestURL . "/screenshot";
+        $response = $this->execute_rest_request_GET($request);
+        return $this->extractValueFromJsonResponse($response);
+    }
+
+    /**
+     * Take a screenshot of the current page and saves it to png file.
+     * @param $png_filename filename (with path) where file has to be saved
+     * @return bool result of operation (false if failure)
+     */
+    public function getScreenshotAndSaveToFile($png_filename) {
+        $img = $this->getScreenshot();
+        $data = base64_decode($img);
+        $success = file_put_contents($png_filename, $data);
     }
 
 }
