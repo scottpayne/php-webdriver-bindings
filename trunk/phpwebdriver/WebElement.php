@@ -33,11 +33,11 @@ class WebElement extends WebDriverBase {
             throw new Exception("$value must be an array");
         }
         $request = $this->requestURL . "/value";
-        $session = curl_init($request);
-        $postargs = "{'value':" . json_encode($value) . "}";
+        $session = $this->curlInit($request);
+		$args = array( 'value'=>$value );
+        $postargs =json_encode($args);
         $this->preparePOST($session, $postargs);
         $response = trim(curl_exec($session));
-        curl_close($session);
     }
 
     public function getValue() {
@@ -48,26 +48,23 @@ class WebElement extends WebDriverBase {
 
     public function clear() {
         $request = $this->requestURL . "/clear";
-        $session = curl_init($request);
+        $session = $this->curlInit($request);
         $this->preparePOST($session, null);
         $response = trim(curl_exec($session));
-        curl_close($session);
     }
 
     public function click() {
         $request = $this->requestURL . "/click";
-        $session = curl_init($request);
+        $session = $this->curlInit($request);
         $this->preparePOST($session, null);
         $response = trim(curl_exec($session));
-        curl_close($session);
     }
 
     public function submit() {
         $request = $this->requestURL . "/submit";
-        $session = curl_init($request);
+        $session = $this->curlInit($request);
         $this->preparePOST($session, "");
         $response = trim(curl_exec($session));
-        curl_close($session);
     }
 
     public function getText() {
@@ -101,6 +98,18 @@ class WebElement extends WebDriverBase {
         $request = $this->requestURL . "/selected";
         $response = $this->execute_rest_request_POST($request, null);
     }
+
+    /**
+     * Determine if an element is currently enabled
+     * @return boolean Whether the element is enabled.
+     */
+    public function isEnabled() {
+        $request = $this->requestURL . "/enabled";
+        $response = $this->execute_rest_request_GET($request);
+        $isSelected = $this->extractValueFromJsonResponse($response);
+        return ($isSelected == 'true');
+    }
+
 
 }
 

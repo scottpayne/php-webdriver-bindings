@@ -24,20 +24,38 @@ require_once 'NoSuchElementException.php';
 class WebDriverBase {
 
     protected $requestURL;
+	protected $_curl;
 
     function __construct($_seleniumUrl) {
         $this->requestURL = $_seleniumUrl;
     }
+	
+	protected function &curlInit( $url ) {
+		if( $this->_curl === null ) {
+			$this->_curl = curl_init( $url );
+		} else {
+			curl_setopt( $this->_curl, CURLOPT_HTTPGET, true );
+			curl_setopt( $this->_curl, CURLOPT_URL, $url );
+		}
+		curl_setopt( $this->_curl, CURLOPT_HTTPHEADER, array("application/json;charset=UTF-8"));
+		curl_setopt( $this->_curl, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $this->_curl, CURLOPT_FOLLOWLOCATION, true );
+		curl_setopt( $this->_curl, CURLOPT_HEADER, false );
+		return $this->_curl;
+	}
+
+	protected function curlClose() {
+		if( $this->_curl !== null ) {
+			curl_close( $this->_curl );
+			$this->_curl = null;
+		}
+	}
 
     protected function preparePOST($session, $postargs) {
-        curl_setopt($session, CURLOPT_HTTPHEADER, array("application/json;charset=UTF-8"));
         curl_setopt($session, CURLOPT_POST, true);
         if ($postargs) {
             curl_setopt($session, CURLOPT_POSTFIELDS, $postargs);
         }
-        curl_setopt($session, CURLOPT_HEADER, false);
-        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($session, CURLOPT_FOLLOWLOCATION, true);
     }
 
     /**
@@ -47,19 +65,19 @@ class WebDriverBase {
      * @return string $response Response from POST request
      */
     protected function execute_rest_request_POST($request, $postargs) {
-        $session = curl_init($request);
+        $session = $this->curlInit($request);
         $this->preparePOST($session, $postargs);
         $response = trim(curl_exec($session));
-        curl_close($session);
         return $response;
     }
 
-    protected function prepareGET($session) {
-        curl_setopt($session, CURLOPT_HTTPHEADER, array("application/json;charset=UTF-8"));
+    protected function prepareGET( $session ) {
+		
         //curl_setopt($session, CURLOPT_GET, true);
-        curl_setopt($session, CURLOPT_HEADER, false);
-        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($session, CURLOPT_FOLLOWLOCATION, true);
+    }
+
+    protected function prepareDELETE($session) {
+        curl_setopt($session, CURLOPT_CUSTOMREQUEST, 'DELETE');
     }
 
     /**
@@ -68,19 +86,10 @@ class WebDriverBase {
      * @return string $response Response from GET request
      */
     protected function execute_rest_request_GET($request) {
-        $session = curl_init($request);
+        $session = $this->curlInit($request);
         $this->prepareGET($session);
         $response = curl_exec($session);
-        curl_close($session);
         return $response;
-    }
-
-    protected function prepareDELETE($session) {
-        curl_setopt($session, CURLOPT_HTTPHEADER, array("application/json;charset=UTF-8"));
-        curl_setopt($session, CURLOPT_CUSTOMREQUEST, 'DELETE');
-        curl_setopt($session, CURLOPT_HEADER, false);
-        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($session, CURLOPT_FOLLOWLOCATION, true);
     }
 
     /**
@@ -93,12 +102,10 @@ class WebDriverBase {
         print_r('last_error = ' . $last_error);
         if ($last_error == 500) { // selenium error
             print_r($response);
-            curl_close($session);
             throw new WebDriverException($message, $code, $previous);
         } else
         if ($last_error != 0) { // unknown error
             print_r($response);
-            curl_close($session);
             throw new WebDriverException($message, $code, $previous);
         }
     }
@@ -118,7 +125,8 @@ class WebDriverBase {
                 throw new NoSuchElementException($json_response);
             break;
             default:
-                throw new WebDriverBase($status, "", null);
+				print_r($json_response);
+                throw new WebDriverException($status, 99, null);
             break;
         }
         /*
@@ -148,17 +156,16 @@ class WebDriverBase {
      */
     public function findElementBy($locatorStrategy, $value) {
         $request = $this->requestURL . "/element";
-        $session = curl_init($request);
+        $session = $this->curlInit($request);
         //$postargs = "{'using':'" . $locatorStrategy . "', 'value':'" . $value . "'}";
         $args = array('using' => $locatorStrategy, 'value' => $value);
-        $postargs = json_encode($args, JSON_FORCE_OBJECT);
+        $postargs = json_encode($args);
         $this->preparePOST($session, $postargs);
         $response = curl_exec($session);
         $json_response = json_decode(trim($response));
         if (!$json_response) {
             return null;
         }
-        curl_close($session);
         $this->handleResponse($json_response);
         $element = $json_response->{'value'};
         /*
@@ -176,13 +183,14 @@ class WebDriverBase {
      */
     public function findElementsBy($locatorStrategy, $value) {
         $request = $this->requestURL . "/elements";
-        $session = curl_init($request);
-        $postargs = "{'using':'" . $locatorStrategy . "', 'value':'" . $value . "'}";
+        $session = $this->curlInit($request);
+        //$postargs = "{'using':'" . $locatorStrategy . "', 'value':'" . $value . "'}";
+        $args = array('using' => $locatorStrategy, 'value' => $value);
+        $postargs = json_encode($args);
         $this->preparePOST($session, $postargs);
         $response = trim(curl_exec($session));
         $json_response = json_decode($response);
         $elements = $json_response->{'value'};
-        curl_close($session);
         $webelements = array();
         foreach ($elements as $key => $element) {
             $webelements[] = new WebElement($this, $element, null);
@@ -198,7 +206,7 @@ class WebDriverBase {
      */
     public function extractValueFromJsonResponse($json) {
         $json = json_decode(trim($json));
-        if ($json && $json->value) {
+        if ($json && isset($json->value)) {
             return $json->value;
         }
         return null;

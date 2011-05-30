@@ -29,15 +29,14 @@ class WebDriver extends WebDriverBase {
 
     public function connect($browserName="firefox") {
         $request = $this->requestURL . "/session";
-        $session = curl_init($request);
-        $postargs = "{ desiredCapabilities: {  browserName: '" . $browserName . "', javascriptEnabled: true, nativeEvents: true } } ";
+        $session = $this->curlInit($request);
+        $postargs = "{ desiredCapabilities: {  browserName: '" . $browserName . "', javascriptEnabled: true, nativeEvents: false } } ";
         $this->preparePOST($session, $postargs);
         curl_setopt($session, CURLOPT_HEADER, true);
         $response = curl_exec($session);
         $header = curl_getinfo($session);
         $this->requestURL = $header['url'];
         //print_r($this->requestURL . "<br/>");
-        curl_close($session);
     }
 
     /**
@@ -45,10 +44,10 @@ class WebDriver extends WebDriverBase {
      */
     public function close() {
         $request = $this->requestURL;
-        $session = curl_init($request);
+        $session = $this->curlInit($request);
         $this->prepareDELETE($session);
         $response = curl_exec($session);
-        curl_close($session);
+        $this->curlClose();
     }
 
     /**
@@ -57,11 +56,10 @@ class WebDriver extends WebDriverBase {
      */
     public function get($url) {
         $request = $this->requestURL . "/url";
-        $session = curl_init($request);
+        $session = $this->curlInit($request);
         $args = array('url' => $url);
-        $this->preparePOST($session, json_encode($args, JSON_FORCE_OBJECT));
+        $this->preparePOST($session, json_encode($args));
         $response = curl_exec($session);
-        curl_close($session);
     }
 
     /**
@@ -103,6 +101,33 @@ class WebDriver extends WebDriverBase {
         return $this->extractValueFromJsonResponse($response);
     }
 
+    public function setSpeed($speed) {
+        $request = $this->requestURL . "/speed";
+        $session = $this->curlInit($request);
+        $args = array('speed' => $speed);
+        $jsonData = json_encode($args);
+		print_r($jsonData);
+        $this->preparePOST($session, $jsonData);
+        $response = curl_exec($session);
+        return $this->extractValueFromJsonResponse($response);
+    }
+
+
+    /**
+	Change focus to another window. The window to change focus to may be specified 
+	by its server assigned window handle, or by the value of its name attribute.
+    */
+    public function selectWindow($windowName) {
+        $request = $this->requestURL . "/window";
+        $session = $this->curlInit($request);
+        $args = array('name' => $windowName);
+        $jsonData = json_encode($args);
+		print_r($jsonData);
+        $this->preparePOST($session, $jsonData);
+        $response = curl_exec($session);
+        return $this->extractValueFromJsonResponse($response);
+    }
+
     /**
       Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.
      * The executed script is assumed to be synchronous and the result of evaluating the script
@@ -111,12 +136,11 @@ class WebDriver extends WebDriverBase {
      */
     public function execute($script, $script_args) {
         $request = $this->requestURL . "/execute";
-        $session = curl_init($request);
+        $session = $this->curlInit($request);
         $args = array('script' => $script, 'args' => $script_args);
-        print_r($jsonData);
+        $jsonData = json_encode($args);
         $this->preparePOST($session, $jsonData);
         $response = curl_exec($session);
-        curl_close($session);
         return $this->extractValueFromJsonResponse($response);
     }
 
@@ -128,12 +152,11 @@ class WebDriver extends WebDriverBase {
      */
     public function executeScript($script, $script_args) {
         $request = $this->requestURL . "/execute";
-        $session = curl_init($request);
+        $session = $this->curlInit($request);
         $args = array('script' => $script, 'args' => $script_args);
         $jsonData = json_encode($args);
         $this->preparePOST($session, $jsonData);
         $response = curl_exec($session);
-        curl_close($session);
         return $this->extractValueFromJsonResponse($response);
     }
 
@@ -147,12 +170,11 @@ class WebDriver extends WebDriverBase {
      */
     public function executeAsyncScript($script, $script_args) {
         $request = $this->requestURL . "/execute_async";
-        $session = curl_init($request);
+        $session = $this->curlInit($request);
         $args = array('script' => $script, 'args' => $script_args);
         $jsonData = json_encode($args);
         $this->preparePOST($session, $jsonData);
         $response = curl_exec($session);
-        curl_close($session);
         return $this->extractValueFromJsonResponse($response);
     }
 

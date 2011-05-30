@@ -20,6 +20,7 @@ class Keys {
   const ENTER = "\x07";
   const TAB = 0x004;
   const SPACE = 0x00D;
+  const BACK_SPACE = 0x003;
 }
 
 ?>
