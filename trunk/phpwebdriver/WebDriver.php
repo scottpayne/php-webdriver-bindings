@@ -27,16 +27,25 @@ class WebDriver extends WebDriverBase {
         parent::__construct("http://" . $host . ":" . $port . "/wd/hub");
     }
 
-    public function connect($browserName="firefox") {
+    public function connect($browserName="firefox", $version="") {
         $request = $this->requestURL . "/session";
         $session = $this->curlInit($request);
-        $postargs = "{ desiredCapabilities: {  browserName: '" . $browserName . "', javascriptEnabled: true, nativeEvents: false } } ";
+	$params = 
+	array( 'desiredCapabilities' =>	
+		array(
+			'browserName'=>$browserName,
+			'javascriptEnabled' => true,
+			'nativeEvents'=>false,
+			'version'=>$version,
+	   	),
+	);
+	//  $postargs = "{ desiredCapabilities: {  browserName: '" . $browserName . "', javascriptEnabled: true, nativeEvents: false, version:=".." } } ";
+	$postargs = json_encode($params);
         $this->preparePOST($session, $postargs);
         curl_setopt($session, CURLOPT_HEADER, true);
         $response = curl_exec($session);
         $header = curl_getinfo($session);
         $this->requestURL = $header['url'];
-        //print_r($this->requestURL . "<br/>");
     }
 
     /**
@@ -106,7 +115,7 @@ class WebDriver extends WebDriverBase {
         $session = $this->curlInit($request);
         $args = array('speed' => $speed);
         $jsonData = json_encode($args);
-		print_r($jsonData);
+//		print_r($jsonData);
         $this->preparePOST($session, $jsonData);
         $response = curl_exec($session);
         return $this->extractValueFromJsonResponse($response);
@@ -122,7 +131,7 @@ class WebDriver extends WebDriverBase {
         $session = $this->curlInit($request);
         $args = array('name' => $windowName);
         $jsonData = json_encode($args);
-		print_r($jsonData);
+//		print_r($jsonData);
         $this->preparePOST($session, $jsonData);
         $response = curl_exec($session);
         return $this->extractValueFromJsonResponse($response);

@@ -14,7 +14,7 @@ class PHPWebDriverTest extends PHPUnit_Framework_TestCase {
 
     protected function setUp() {
         $this->webdriver = new WebDriver("localhost", 4444);
-        $this->webdriver->connect("firefox");
+        $this->webdriver->connect("chrome");
     }
 
     protected function tearDown() {
