@@ -27,19 +27,22 @@ class WebDriver extends WebDriverBase {
         parent::__construct("http://" . $host . ":" . $port . "/wd/hub");
     }
 
-    public function connect($browserName="firefox", $version="") {
+    public function connect($browserName="firefox", $version="", $caps=array()) {
         $request = $this->requestURL . "/session";
         $session = $this->curlInit($request);
-	$params = 
-	array( 'desiredCapabilities' =>	
-		array(
-			'browserName'=>$browserName,
-			'javascriptEnabled' => true,
-			'nativeEvents'=>false,
-			'version'=>$version,
-	   	),
-	);
-	//  $postargs = "{ desiredCapabilities: {  browserName: '" . $browserName . "', javascriptEnabled: true, nativeEvents: false, version:=".." } } ";
+	$allCaps = 	
+		array_merge(
+  			array(
+  				'javascriptEnabled' => true,
+  				'nativeEvents'=>false,
+  		   	),
+			$caps,
+  			array(
+	  			'browserName'=>$browserName,
+	  			'version'=>$version,
+  		   	)
+		);
+	$params = array( 'desiredCapabilities' =>	$allCaps );
 	$postargs = json_encode($params);
         $this->preparePOST($session, $postargs);
         curl_setopt($session, CURLOPT_HEADER, true);
