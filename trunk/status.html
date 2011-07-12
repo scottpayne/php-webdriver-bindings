@@ -2,6 +2,7 @@
 <head>
 <style type="text/css">
 .done {background:#00ff00; }
+  .done-by-scott { background: #ff4500 }
 </style>
 </head>
 <body>
@@ -56,7 +57,7 @@
  <tr class="done"><td> POST </td><td> /session/:sessionId/element/:id/selected </td><td> Select an <tt>OPTION</tt> element, or an <tt>INPUT</tt> element of type <tt>checkbox</tt> or <tt>radiobutton</tt>. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebElement.html#setSelected%28%29" rel="nofollow">WebElement#setSelected()</a> </td></tr>
  <tr><td> POST </td><td> /session/:sessionId/element/:id/toggle </td><td> Toggle whether an <tt>OPTION</tt> element, or an <tt>INPUT</tt> element of type <tt>checkbox</tt> or <tt>radiobutton</tt> is currently selected. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebElement.html#toggle%28%29" rel="nofollow">WebElement#toggle()</a> </td></tr>
  <tr class="done"><td> GET </td><td> /session/:sessionId/element/:id/enabled </td><td> Determine if an element is currently enabled. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebElement.html#isEnabled%28%29" rel="nofollow">WebElement#isEnabled()</a> </td></tr>
- <tr><td> GET </td><td> /session/:sessionId/element/:id/attribute/:name </td><td> Get the value of an element's attribute. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebElement.html#getAttribute%28java.lang.String%29" rel="nofollow">WebElement#getAttribute(String)</a> </td></tr>
+ <tr class="done-by-scott"><td> GET </td><td> /session/:sessionId/element/:id/attribute/:name </td><td> Get the value of an element's attribute. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebElement.html#getAttribute%28java.lang.String%29" rel="nofollow">WebElement#getAttribute(String)</a> </td></tr>
  <tr><td> GET </td><td> /session/:sessionId/element/:id/equals/:other </td><td> Test if two element IDs refer to the same DOM element. </td><td> <i>N/A</i> </td></tr>
  <tr><td> GET </td><td> /session/:sessionId/element/:id/displayed </td><td> Determine if an element is currently displayed. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/RenderedWebElement.html#isDisplayed%28%29" rel="nofollow">RenderedWebElement#isDisplayed()</a> </td></tr>
  <tr><td> GET </td><td> /session/:sessionId/element/:id/location </td><td> Determine an element's location on the page. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/RenderedWebElement.html#getLocation%28%29" rel="nofollow">RenderedWebElement#getLocation()</a> </td></tr>

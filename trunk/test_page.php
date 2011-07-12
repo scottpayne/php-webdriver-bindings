@@ -24,6 +24,7 @@ product name: <input type="text" name="product_name" id="prod_name" size="40" va
 </select>
 <br/>
 <input type="checkbox" name="chbox1"/>checkbox<br/>
+  <p><input type="checkbox" id="i-am-checked" checked='checked'/>Am I checked? Yes I am!</p>
 <br/>
 <input type="submit" value="Confirm"/>
 </form>

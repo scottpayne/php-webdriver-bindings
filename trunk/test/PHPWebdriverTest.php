@@ -121,6 +121,12 @@ class PHPWebDriverTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($element->getAttribute('class'), 'has-none');
   }
 
+  public function testGetAttributeShouldReturnTrueWhenCheckedEqualsChecked() {
+    $this->webdriver->get($this->test_url);
+    $element = $this->webdriver->findElementBy(LocatorStrategy::id, "i-am-checked");
+    $this->assertTrue($element->getAttribute('checked'));
+  }
+
 }
 
 ?>

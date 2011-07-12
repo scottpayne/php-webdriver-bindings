@@ -92,7 +92,7 @@ class WebElement extends WebDriverBase {
 
     /**
      * Select an OPTION element, or an INPUT element of type checkbox or radiobutton.
-     * 
+     *
      */
     public function setSelected() {
         $request = $this->requestURL . "/selected";
@@ -110,10 +110,37 @@ class WebElement extends WebDriverBase {
         return ($isSelected == 'true');
     }
 
-  public function getAttribute($attributeName) {
+  /*
+   * Get the value of a the given attribute of the element. Will return the current value, even if this has been
+   * modified after the page has been loaded. More exactly, this method will return the value of the given attribute,
+   * unless that attribute is not present, in which case the value of the property with the same name is returned.
+   * If neither value is set, null is returned. The "style" attribute is converted as best can be to a text
+   * representation with a trailing semi-colon. The following are deemed to be "boolean" attributes, and will return
+   * either "true" or "false": async, autofocus, autoplay, checked, compact, complete, controls, declare,
+   * defaultchecked, defaultselected, defer, disabled, draggable, ended, formnovalidate, hidden, indeterminate,
+   *  iscontenteditable, ismap, itemscope, loop, multiple, muted, nohref, noresize, noshade, novalidate, nowrap,
+   * open, paused, pubdate, readonly, required, reversed, scoped, seamless, seeking, selected, spellcheck, truespeed,
+   * willvalidate. Finally, the following commonly mis-capitalized attribute/property names are evaluated as expected:
+   * "class", "readonly"
+   *
+   * @param $attributeName name of the attribute
+   * @return The attribute's current value or null if the value is not set.
+  */
+  public function getAttribute($attributeName)
+  {
     $request = $this->requestURL . "/attribute/" . $attributeName;
     $response = $this->execute_rest_request_GET($request);
-    return $this->extractValueFromJsonResponse($response);
+
+    $value = $this->extractValueFromJsonResponse($response);
+    switch($value) {
+      case 'true':
+        $value = TRUE;
+        break;
+      case 'false':
+        $value = FALSE;
+        break;
+    }
+    return $value;
   }
 
 
