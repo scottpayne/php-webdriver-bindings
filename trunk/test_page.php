@@ -33,6 +33,7 @@ product name: <input type="text" name="product_name" id="prod_name" size="40" va
 
 <a href="javascript:sayHelloAlert('computer')">say hello (javascript)</a>
 
+<span id='attr-haver' class='has-none'></span>
 <script type="text/javascript">
 function sayHello(name) {
   return "hello "+name+" !!!";

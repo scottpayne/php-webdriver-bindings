@@ -110,6 +110,12 @@ class WebElement extends WebDriverBase {
         return ($isSelected == 'true');
     }
 
+  public function getAttribute($attributeName) {
+    $request = $this->requestURL . "/attribute/" . $attributeName;
+    $response = $this->execute_rest_request_GET($request);
+    return $this->extractValueFromJsonResponse($response);
+  }
+
 
 }
 
