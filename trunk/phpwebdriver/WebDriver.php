@@ -231,6 +231,33 @@ class WebDriver extends WebDriverBase
     $success = file_put_contents($png_filename, $data);
   }
 
+    /**
+     * Return a set of window handles which can be used to iterate over all open windows
+     * of this webdriver instance by passing them to #switchTo().window(String)
+     * 
+     * @return A set of window handles which can be used to iterate over all open windows.
+     */
+    public function getWindowHandles()
+    {
+        $request = $this->requestURL . "/window_handles";
+        $response = $this->execute_rest_request_GET($request);
+        return $this->extractValueFromJsonResponse($response);
+    }
+
+    /**
+     * Return an opaque handle to this window that uniquely identifies it within this driver instance.
+     * This can be used to switch to this window at a later date
+     * 
+     * @return string
+     */
+    public function getWindowHandle()
+    {
+        $request = $this->requestURL . "/window_handle";
+        $response = $this->execute_rest_request_GET($request);
+        return $this->extractValueFromJsonResponse($response);
+    }
+
+
 }
 
 ?>

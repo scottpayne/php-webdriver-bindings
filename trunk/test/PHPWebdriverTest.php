@@ -143,6 +143,20 @@ class PHPWebDriverTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($element->getAttribute('checked'));
     }
 
+    public function testGetWindowHandlesShouldHaveOneItem() {
+        $this->webdriver->get($this->test_url);
+        $handles = $this->webdriver->getWindowHandles();
+        $this->assertEquals(1, count($handles));
+    }
+
+    public function testGetWindowHandleShouldMatchFirstElementOfGetWindowHandles() {
+        $this->webdriver->get($this->test_url);
+        $handles = $this->webdriver->getWindowHandles();
+        $this_window_handle = $this->webdriver->getWindowHandle();
+        $this->assertEquals($handles[0], $this_window_handle);
+    }
+
+
 }
 
 ?>
