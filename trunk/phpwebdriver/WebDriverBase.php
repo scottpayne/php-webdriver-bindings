@@ -41,6 +41,7 @@ class WebDriverBase {
 		curl_setopt( $this->_curl, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $this->_curl, CURLOPT_FOLLOWLOCATION, true );
 		curl_setopt( $this->_curl, CURLOPT_HEADER, false );
+//		print_r($url."\n");
 		return $this->_curl;
 	}
 
@@ -197,6 +198,7 @@ class WebDriverBase {
         }
         return $webelements;
     }
+
 
     /**
      * Function returns value of 'value' attribute in JSON string
