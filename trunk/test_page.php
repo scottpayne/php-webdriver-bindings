@@ -17,10 +17,10 @@ if (isset($_POST["product_name"])) {
 
 product name: <input type="text" name="product_name" id="prod_name" size="40" value="<?php if (isset($prod)) echo $prod;?>"/>
 <select name="sel1">
-  <option id="1">option 1</option>
-  <option id="2">option 2</option>
-  <option id="3">option 3</option>
-  <option id="4">option 4</option>
+  <option id="1" value="1">option 1</option>
+  <option id="2" value="2">option 2</option>
+  <option id="3" value="3">option 3</option>
+  <option id="4" value="4">option 4</option>
 </select>
 <br/>
 <input type="checkbox" name="chbox1"/>checkbox<br/>

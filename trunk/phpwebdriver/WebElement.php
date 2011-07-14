@@ -95,9 +95,28 @@ class WebElement extends WebDriverBase {
      *
      */
     public function setSelected() {
-        $request = $this->requestURL . "/selected";
-        $response = $this->execute_rest_request_POST($request, null);
+	$this->click(); //setSelected is now deprecated
     }
+
+
+    /**
+     * find OPTION by text in combobox
+     * 
+     */
+    public function findOptionElementByText($text) {
+        $option = $this->findElementBy(LocatorStrategy::xpath, 'option[normalize-space(text())="'.$text.'"]');
+        return $option;
+    }
+
+    /**
+     * find OPTION by value in combobox
+     * 
+     */
+    public function findOptionElementByValue($val) {
+        $option = $this->findElementBy(LocatorStrategy::xpath, 'option[@value="'.$val.'"]');
+        return $option;
+    }
+   
 
     /**
      * Determine if an element is currently enabled
