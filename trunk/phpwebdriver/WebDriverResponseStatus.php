@@ -15,6 +15,6 @@ class WebDriverResponseStatus {
     const InvalidCookieDomain=24; 	//An illegal attempt was made to set a cookie under a different domain than the current page.
     const UnableToSetCookie=25; 	//A request to set a cookie's value could not be satisfied.
     const Timeout=28;         //A command did not complete before its timeout expired.
-    
+    const SeleniumServerUnavailable = 999; // Check that Selenium server is up and running
 }
 ?>

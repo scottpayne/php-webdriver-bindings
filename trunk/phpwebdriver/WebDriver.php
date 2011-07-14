@@ -20,6 +20,7 @@ require_once 'WebDriverBase.php';
 require_once 'WebElement.php';
 require_once 'WebDriverException.php';
 require_once 'LocatorStrategy.php';
+require_once 'SeleniumException.php';
 
 class WebDriver extends WebDriverBase
 {
@@ -50,6 +51,9 @@ class WebDriver extends WebDriverBase
     $this->preparePOST($session, $postargs);
     curl_setopt($session, CURLOPT_HEADER, true);
     $response = curl_exec($session);
+    if (!$response) {
+        throw new SeleniumException('Selenium server is not listening on ' . $this->requestURL, WebDriverResponseStatus::SeleniumServerUnavailable);
+    }
     $header = curl_getinfo($session);
     $this->requestURL = $header['url'];
   }
