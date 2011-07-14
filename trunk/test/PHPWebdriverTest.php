@@ -11,12 +11,25 @@ require_once dirname(__FILE__) . '/../phpwebdriver/WebDriver.php';
 class PHPWebDriverTest extends PHPUnit_Framework_TestCase
 {
 
-  private $test_url = "http://localhost/php-webdriver-bindings/test_page.php";
+  private $config;
+  private $test_url;
+
+  public function __construct() {
+    parent::__construct(func_get_args());
+    $config = parse_ini_file(dirname(__FILE__) . '/../config/test.ini', true);
+    if ($config) {
+      $this->config = $config;
+    } else {
+      throw new RuntimeException("Couldn't parse test.ini file");
+    }
+    $this->test_url = $this->config['test_page']['url'];
+  }
 
   protected function setUp()
   {
-    $this->webdriver = new WebDriver("localhost", 4444);
-    $this->webdriver->connect("chrome");
+    $selenium = $this->config['selenium'];
+    $this->webdriver = new WebDriver($selenium['host'], $selenium['port']);
+    $this->webdriver->connect($selenium['browser']);
   }
 
   protected function tearDown()
