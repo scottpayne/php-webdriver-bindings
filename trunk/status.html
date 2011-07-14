@@ -2,7 +2,7 @@
 <head>
 <style type="text/css">
 .done {background:#00ff00; }
-  .done-by-scott { background: #ff4500 }
+  .done-by-scott { background: #7aff7a  }
 </style>
 </head>
 <body>
@@ -13,8 +13,8 @@
  <tr class="done"><td> DELETE </td><td> /session/:sessionId </td><td> Delete the session. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebDriver.html#quit%28%29" rel="nofollow">WebDriver#quit()</a> </td></tr>
  <tr><td> POST </td><td> /session/:sessionId/timeouts/async_script </td><td> Set the amount of time, in milliseconds, that asynchronous scripts executed by <tt>/session/:sessionId/execute_async</tt> are permitted to run before they are aborted and a |Timeout| error is returned to the client. </td><td> <i>N/A</i> </td></tr>
  <tr><td> POST </td><td> /session/:sessionId/timeouts/implicit_wait </td><td> Set the amount of time the driver should wait when searching for elements. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebDriver.Timeouts.html#implicitlyWait%28long,%20java.util.concurrent.TimeUnit%29" rel="nofollow">WebDriver.Timeouts#implicitlyWait(long, TimeUnit)</a> </td></tr>
- <tr><td> GET </td><td> /session/:sessionId/window_handle </td><td> Retrieve the current window handle. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebDriver.html#getWindowHandle%28%29" rel="nofollow">WebDriver#getWindowHandle()</a> </td></tr>
- <tr><td> GET </td><td> /session/:sessionId/window_handles </td><td> Retrieve the list of all window handles available to the session. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebDriver.html#getWindowHandles%28%29" rel="nofollow">WebDriver#getWindowHandles()</a> </td></tr>
+ <tr class="done-by-scott"><td> GET </td><td> /session/:sessionId/window_handle </td><td> Retrieve the current window handle. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebDriver.html#getWindowHandle%28%29" rel="nofollow">WebDriver#getWindowHandle()</a> </td></tr>
+ <tr class="done-by-scott"><td> GET </td><td> /session/:sessionId/window_handles </td><td> Retrieve the list of all window handles available to the session. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebDriver.html#getWindowHandles%28%29" rel="nofollow">WebDriver#getWindowHandles()</a> </td></tr>
  <tr class="done"><td> GET </td><td> /session/:sessionId/url </td><td> Retrieve the URL of the current page. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebDriver.html#getCurrentUrl%28%29" rel="nofollow">WebDriver#getCurrentUrl()</a> </td></tr>
  <tr class="done"><td> POST </td><td> /session/:sessionId/url </td><td> Navigate to a new URL. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebDriver.html#get%28java.lang.String%29" rel="nofollow">WebDriver#get(String)</a> </td></tr>
  <tr><td> POST </td><td> /session/:sessionId/forward </td><td> Navigate forwards in the browser history, if possible. </td><td> <a href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebDriver.Navigation.html#forward%28%29" rel="nofollow">WebDriver.Navigation#forward()</a> </td></tr>
